@@ -231,9 +231,11 @@ pub trait Prover {
             now.elapsed().as_millis()
         );
 
+        let now = Instant::now();
         // extend the main execution trace and build a Merkle tree from the extended trace
         let (main_trace_lde, main_trace_tree, main_trace_polys) =
             self.build_trace_commitment::<Self::BaseField, H>(trace.main_segment(), &domain);
+        println!("main trace commitment total time: {:?}", now.elapsed());
 
         // commit to the LDE of the main trace by writing the root of its Merkle tree into
         // the channel
@@ -479,27 +481,37 @@ pub trait Prover {
         #[cfg(feature = "std")]
         let now = Instant::now();
         let trace_polys = trace.interpolate_columns();
+        if trace.num_cols() == 72 && trace.num_rows() == 1<<18 {
+            println!("ifft cost time: {:?}", now.elapsed());
+        }
+        let now = Instant::now();
         let trace_lde = trace_polys.evaluate_columns_over(domain);
-        #[cfg(feature = "std")]
-        debug!(
-            "Extended execution trace of {} columns from 2^{} to 2^{} steps ({}x blowup) in {} ms",
-            trace_lde.num_cols(),
-            log2(trace_polys.num_rows()),
-            log2(trace_lde.num_rows()),
-            domain.trace_to_lde_blowup(),
-            now.elapsed().as_millis()
-        );
+        if trace.num_cols() == 72 && trace.num_rows() == 1<<18 {
+            println!("fft cost time: {:?}", now.elapsed());
+        }
+        // #[cfg(feature = "std")]
+        // debug!(
+        //     "Extended execution trace of {} columns from 2^{} to 2^{} steps ({}x blowup) in {} ms",
+        //     trace_lde.num_cols(),
+        //     log2(trace_polys.num_rows()),
+        //     log2(trace_lde.num_rows()),
+        //     domain.trace_to_lde_blowup(),
+        //     now.elapsed().as_millis()
+        // );
 
         // build trace commitment
         #[cfg(feature = "std")]
         let now = Instant::now();
         let trace_tree = trace_lde.commit_to_rows();
-        #[cfg(feature = "std")]
-        debug!(
-            "Computed execution trace commitment (Merkle tree of depth {}) in {} ms",
-            trace_tree.depth(),
-            now.elapsed().as_millis()
-        );
+        if trace.num_cols() == 72 && trace.num_rows() == 1<<18 {
+            println!("build merkle tree cost time: {:?}", now.elapsed());
+        }
+        // #[cfg(feature = "std")]
+        // debug!(
+        //     "Computed execution trace commitment (Merkle tree of depth {}) in {} ms",
+        //     trace_tree.depth(),
+        //     now.elapsed().as_millis()
+        // );
 
         (trace_lde, trace_tree, trace_polys)
     }
