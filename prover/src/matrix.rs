@@ -230,8 +230,8 @@ impl<E: FieldElement> Matrix<E> {
         // row into row_buf to avoid heap allocations, and then by applying the hash function to
         // the buffer.
 
-        println!("{}", std::any::type_name::<E>());
-        println!("{}", std::any::type_name::<H>());
+        // println!("{}", std::any::type_name::<E>());
+        // println!("{}", std::any::type_name::<H>());
 
         batch_iter_mut!(
             &mut row_hashes,
