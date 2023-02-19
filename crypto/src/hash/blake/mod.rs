@@ -36,19 +36,19 @@ impl<B: StarkField> Hasher for Blake3_256<B> {
         data[32..].copy_from_slice(&value.to_le_bytes());
         ByteDigest(*blake3::hash(&data).as_bytes())
     }
+    
 }
 
 impl<B: StarkField> ElementHasher for Blake3_256<B> {
     type BaseField = B;
 
     fn hash_elements<E: FieldElement<BaseField = Self::BaseField>>(elements: &[E]) -> Self::Digest {
-        if B::IS_CANONICAL {
+        if !B::IS_CANONICAL {
             // when element's internal and canonical representations are the same, we can hash
             // element bytes directly
             let bytes = E::elements_as_bytes(elements);
             ByteDigest(*blake3::hash(bytes).as_bytes())
         } else {
-            // when elements' internal and canonical representations differ, we need to serialize
             // them before hashing
             let mut hasher = BlakeHasher::new();
             hasher.write(elements);

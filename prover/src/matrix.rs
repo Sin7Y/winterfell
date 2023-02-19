@@ -229,6 +229,10 @@ impl<E: FieldElement> Matrix<E> {
         // iterate though matrix rows, hashing each row; the hashing is done by first copying a
         // row into row_buf to avoid heap allocations, and then by applying the hash function to
         // the buffer.
+
+        println!("{}", std::any::type_name::<E>());
+        println!("{}", std::any::type_name::<H>());
+
         batch_iter_mut!(
             &mut row_hashes,
             128, // min batch size
