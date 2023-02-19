@@ -481,12 +481,12 @@ pub trait Prover {
         #[cfg(feature = "std")]
         let now = Instant::now();
         let trace_polys = trace.interpolate_columns();
-        if trace.num_cols() == 72 && trace.num_rows() == 1<<18 {
+        if trace.num_cols() == 72 && trace.num_rows() == 1<<23 {
             println!("ifft cost time: {:?}", now.elapsed());
         }
         let now = Instant::now();
         let trace_lde = trace_polys.evaluate_columns_over(domain);
-        if trace.num_cols() == 72 && trace.num_rows() == 1<<18 {
+        if trace.num_cols() == 72 && trace.num_rows() == 1<<23 {
             println!("fft cost time: {:?}", now.elapsed());
         }
         // #[cfg(feature = "std")]
@@ -503,7 +503,7 @@ pub trait Prover {
         #[cfg(feature = "std")]
         let now = Instant::now();
         let trace_tree = trace_lde.commit_to_rows();
-        if trace.num_cols() == 72 && trace.num_rows() == 1<<18 {
+        if trace.num_cols() == 72 && trace.num_rows() == 1<<23 {
             println!("build merkle tree cost time: {:?}", now.elapsed());
         }
         // #[cfg(feature = "std")]
