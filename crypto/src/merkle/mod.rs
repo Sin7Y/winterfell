@@ -106,6 +106,9 @@ impl<H: Hasher> MerkleTree<H> {
     /// * Fewer than two leaves were provided.
     /// * Number of leaves is not a power of two.
     pub fn new(leaves: Vec<H::Digest>) -> Result<Self, MerkleTreeError> {
+
+        let now = std::time::Instant::now();
+
         if leaves.len() < 2 {
             return Err(MerkleTreeError::TooFewLeaves(2, leaves.len()));
         }
@@ -122,6 +125,8 @@ impl<H: Hasher> MerkleTree<H> {
         } else {
             concurrent::build_merkle_nodes::<H>(&leaves)
         };
+
+        println!("build_merkle_nodes: {:?}", now.elapsed());
 
         Ok(MerkleTree { nodes, leaves })
     }

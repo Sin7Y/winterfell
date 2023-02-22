@@ -233,6 +233,8 @@ impl<E: FieldElement> Matrix<E> {
         // println!("{}", std::any::type_name::<E>());
         // println!("{}", std::any::type_name::<H>());
 
+        let now  = std::time::Instant::now();
+
         batch_iter_mut!(
             &mut row_hashes,
             128, // min batch size
@@ -244,6 +246,8 @@ impl<E: FieldElement> Matrix<E> {
                 }
             }
         );
+
+        println!("batch_iter_mut time: {:?}", now.elapsed());
 
         // build Merkle tree out of hashed rows
         MerkleTree::new(row_hashes).expect("failed to construct trace Merkle tree")
